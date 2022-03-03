@@ -1,0 +1,57 @@
+<p>paginate works!</p>
+<table class="table table-striped">
+    <thead>
+        <tr> 
+            <th *ngFor="let item of headers">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>{{item.label}}</span>
+                    <i class="fa-solid fa-sort" (click)="setSort(item.prop, 'asc')" *ngIf="sortSetup == null"></i>
+                    <i class="fa-solid fa-sort-up" (click)="setSort(item.prop, 'desc')" *ngIf="sortSetup != null && sortSetup.prop == item.prop && sortSetup.sort == 'asc'"></i>
+                    <i class="fa-solid fa-sort-down" (click)="sortSetup = null; consultar()" *ngIf=" sortSetup != null && sortSetup.prop == item.prop && sortSetup.sort == 'desc'"></i>
+                </div>
+            </th>
+        </tr>
+    </thead>
+    <tbody *ngIf="data">
+        <tr *ngFor="let item of data.content">
+            <ng-container *ngFor="let header of headers">
+                <td>{{item[header.prop]}}</td>
+            </ng-container>
+        </tr>
+    </tbody>
+</table>
+
+
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <label style="font-size: 11px">Itens por Página</label>
+            <select class="form-select form-select-sm" [(ngModel)]="itensPerPage" (change)="changeItensPerPage()">
+                <option value="10">10</option>
+                <option value="30">30</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+    </div>
+    <nav *ngIf="data">
+        <ul class="pagination pagination-sm justify-content-end">
+            <li class="page-item">
+                <a class="page-link"  [routerLink]="[]" (click)="changePage(0)" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+            <ng-container *ngFor="let item of pagesQty">
+                <li class="page-item" [ngClass]="{
+                    'active' : data.number + 1 == item
+                }" *ngIf="item < data.number + paginationSideLimit + 1 
+                    && item > data.number - paginationSideLimit + 1">
+                  <a class="page-link" [routerLink]="[]" (click)="changePage(item - 1)">{{item}}</a>
+                </li>
+            </ng-container>
+            <li class="page-item">
+                <a class="page-link" [routerLink]="[]" (click)="changePage(data.totalPages - 1)" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
